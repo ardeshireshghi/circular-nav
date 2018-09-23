@@ -1,0 +1,8 @@
+.section__blog {
+	background-color: #FFC107;
+	color: var(--white)
+}
+
+.section__blog .page__section__close {
+	color: var(--white)
+}

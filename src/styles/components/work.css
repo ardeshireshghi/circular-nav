@@ -1,0 +1,8 @@
+.section__work {
+	background-color: #4CAF50;
+	color: var(--white);
+}
+
+.section__work .page__section__close {
+	color: var(--white)
+}

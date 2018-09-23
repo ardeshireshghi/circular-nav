@@ -1,0 +1,124 @@
+.nav__circular {
+  position: relative;
+  --green: #4CAF50;
+  --button-size: 56px;
+  --button-bg-color: var(--green);
+  --button-icon-color: #b3dbf7;
+  --item-size: 80px;
+  --item-bg-color: #eee;
+  --item-text-color: #666;
+}
+
+.nav__circular__button {
+  background-color: var(--button-bg-color);
+  border-radius: 50%;
+  border: none;
+  position: relative;
+  object-fit: cover;
+  width: var(--button-size);
+  height: var(--button-size);
+  padding: calc(var(--button-size) / 10);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.24);
+  outline: none;
+  cursor: pointer;
+}
+
+.nav__circular__button:before {
+  background-color: var(--button-icon-color);
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 3px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  transition: transform 0.25s ease;
+  transform: translateY(-5px) rotate(0);
+}
+
+.nav__circular__button:after {
+  background-color: var(--button-icon-color);
+  content: ' ';
+  position: absolute;
+  width: 60%;
+  height: 3px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  transition: transform 0.25s ease;
+  transform: translateY(5px) rotate(0);
+}
+
+.nav__circular--opened .nav__circular__button:before {
+  transform: translateY(0) rotate(45deg);
+}
+
+.nav__circular--opened .nav__circular__button:after {
+  transform: translateY(0) rotate(-45deg);
+}
+
+
+.nav__circular__wrapper {
+  position: absolute;
+  pointer-events: none;
+  top: calc((var(--item-size) - var(--button-size)) * -0.5);
+  left: calc((var(--item-size) - var(--button-size)) * -0.5);
+}
+
+.nav__circular__item {
+  display: flex;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--item-bg-color);
+  cursor: pointer;
+  width: var(--item-size);
+  height: var(--item-size);
+  text-align: center;
+  color: white;
+  position: absolute;
+  top: 0;
+  transition: all .25s ease;
+  animation-duration: .4s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+  opacity: 0;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.09), 0px 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+
+.nav__item--custom {
+  background-color: white;
+  color: var(--item-text-color);
+  font-weight: 400;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.nav__item--custom a {
+  line-height: 1rem;
+}
+
+.nav__circular--opened .nav__circular__wrapper {
+  pointer-events: all;
+}
+
+@keyframes pop-fadeout {
+  0% {
+    width: var(--item-size);
+    height: var(--item-size);
+  }
+
+  50% {
+    opacity: .2;
+  }
+
+  100% {
+    width: calc(var(--item-size) * 1.2);
+    height: calc(var(--item-size) * 1.2);
+    line-height: calc(var(--item-size) * 1.2);
+    opacity: 0;
+  }
+}

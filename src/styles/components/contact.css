@@ -1,0 +1,8 @@
+.section__contact {
+    background: #2196F3;
+    color: white;
+}
+
+.section__contact .page__section__close {
+	color: var(--white)
+}
