@@ -1,11 +1,14 @@
 :root {
   --white: #FFF;
   --red: #f44336;
+  --cyan: #b3dbf7;
+  --page-background-color: var(--cyan);
   font-size: 1em;
   height: 100%;
 }
 
 body {
+  background-color: var(--page-background-color);
   padding: 0;
   margin: 0;
   height: 100%;

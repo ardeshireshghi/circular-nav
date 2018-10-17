@@ -3,7 +3,7 @@
   --green: #4CAF50;
   --button-size: 56px;
   --button-bg-color: var(--green);
-  --button-icon-color: #b3dbf7;
+  --button-icon-color: var(--white);
   --item-size: 80px;
   --item-bg-color: #eee;
   --item-text-color: #666;

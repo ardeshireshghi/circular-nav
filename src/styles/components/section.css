@@ -16,7 +16,7 @@
     justify-content: flex-start;
 	padding: 0 2rem;
 	will-change: opacity, visibility, transform;
-	transition: opacity .55s, transform .35s;
+	transition: opacity .55s ease 0.15s, transform .35s ease 0.15s;
 	transform: translateY(30px) translateZ(0);
 }
 

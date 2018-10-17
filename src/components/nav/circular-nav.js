@@ -18,40 +18,41 @@ const CircularNav = ((window) => {
   const NAV_COMPONENT_DATA_SELECTOR = '[data-circular-nav]';
   const MAX_ANIMATION_DELAY_SECONDS = 1.35;
 
-  const VALID_OPTIONS_LIST = [ 
-    'distance', 
-    'itemClassName', 
-    'buttonSize', 
-    'buttonBgColor', 
-    'itemSize', 
-    'closeTransitionType' 
+  const VALID_OPTIONS_LIST = [
+    'distance',
+    'itemClassName',
+    'buttonSize',
+    'buttonBgColor',
+    'itemSize',
+    'closeTransitionType',
+    'onOpenFinished'
   ];
 
   function preventDefault(e) {
     e = e || window.event;
     if (e.preventDefault)
-        e.preventDefault();
-    e.returnValue = false;  
+      e.preventDefault();
+    e.returnValue = false;
   }
 
   function disableScroll() {
     if (window.addEventListener) {
       window.addEventListener('DOMMouseScroll', preventDefault, false);
     }
-  
+
     window.onwheel = preventDefault; // modern standard
     window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
-    window.ontouchmove  = preventDefault; // mobile
+    window.ontouchmove = preventDefault; // mobile
   }
 
   function enableScroll() {
     if (window.removeEventListener) {
       window.removeEventListener('DOMMouseScroll', preventDefault, false);
     }
-        
-    window.onmousewheel = document.onmousewheel = null; 
-    window.onwheel = null; 
-    window.ontouchmove = null;  
+
+    window.onmousewheel = document.onmousewheel = null;
+    window.onwheel = null;
+    window.ontouchmove = null;
   }
 
   class CircularNav {
@@ -76,7 +77,7 @@ const CircularNav = ((window) => {
     }
 
     initialise() {
-      const { itemClassName } = this.settings;
+      const {itemClassName} = this.settings;
 
       if (itemClassName) {
         this.navItems.forEach(item => item.classList.add(itemClassName));
@@ -84,7 +85,7 @@ const CircularNav = ((window) => {
 
       Object.keys(this.settingToCssVariableMap)
         .forEach((settingName) => {
-          const { [settingName]: settingValue } = this.settings;
+          const {[settingName]: settingValue} = this.settings;
 
           if (settingValue) {
             this.navEl.style.setProperty(this.settingToCssVariableMap[settingName], settingValue);
@@ -94,23 +95,23 @@ const CircularNav = ((window) => {
 
     parseOptions(options) {
       let result = {};
-      
+
       for (let optionName of this.optionsList()) {
         if (optionName in options) {
           result = {
             ...result,
-            [optionName]: options[optionName] 
+            [optionName]: options[optionName]
           };
 
           continue;
         }
 
         let optionDataAttr = this.navEl.getAttribute(`data-nav-${optionName}`);
-       
+
         if (optionDataAttr) {
           result = {
             ...result,
-            [optionName]: optionDataAttr 
+            [optionName]: optionDataAttr
           };
         }
       }
@@ -121,7 +122,7 @@ const CircularNav = ((window) => {
     optionsList() {
       return VALID_OPTIONS_LIST;
     }
-    
+
     setEventListeners() {
       this.handleAllTransitionEnd = (e) => {
         e.currentTarget.removeEventListener(e.type, this.handleMenuItemTransitionEnd);
@@ -138,7 +139,7 @@ const CircularNav = ((window) => {
 
       this.handleMenuItemTransitionEnd = (e) => {
         if (e.target.matches(Selectors.NAV_ITEM)) {
-          const { type: eventType } = e;
+          const {type: eventType} = e;
           const {
             [`${eventType}Count`]: eventTriggeredCount = 0
           } = this.state;
@@ -150,9 +151,9 @@ const CircularNav = ((window) => {
 
           const areTransitionsFinished = (eventType) => {
             return (eventType === 'transitionend' &&
-            (eventTriggeredCount + 1) === (this.navItems.length * 2)) ||
-            (eventType === 'animationend' &&
-            (eventTriggeredCount + 1) === this.navItems.length)
+              (eventTriggeredCount + 1) === (this.navItems.length * 2)) ||
+              (eventType === 'animationend' &&
+                (eventTriggeredCount + 1) === this.navItems.length)
           };
 
           if (areTransitionsFinished(eventType)) {
@@ -167,7 +168,7 @@ const CircularNav = ((window) => {
       };
 
       this.handleButtonClick = (event) => {
-        const { opened } = this.state;
+        const {opened} = this.state;
 
         if (!this.state.animating) {
           this.state = {
@@ -189,13 +190,14 @@ const CircularNav = ((window) => {
       };
 
       this.handleNavItemClick = (event) => {
-        event.preventDefault();
-        const navItem = event.target.tagName === 'A' 
-          ? event.target.parentNode 
+        preventDefault(event);
+        const navItem = event.target.tagName === 'A'
+          ? event.target.parentNode
           : event.target;
-        
+
         this.disableScroll();
-        this.openItem(navItem);  
+        this.openItem(navItem);
+        window.location.hash = navItem.querySelector('a').getAttribute('href');
       };
 
       this.navEl.addEventListener('click', (event) => {
@@ -208,7 +210,7 @@ const CircularNav = ((window) => {
 
         if (target.matches(Selectors.NAV_ITEM) ||
           target.parentNode.matches(Selectors.NAV_ITEM)) {
-            this.handleNavItemClick(event);
+          this.handleNavItemClick(event);
         }
       });
     }
@@ -226,8 +228,8 @@ const CircularNav = ((window) => {
     openItem(navItem) {
       const navLinkEl = navItem.querySelector('a');
       const targetSectionSelector = navLinkEl.getAttribute('href');
-      
-      navLinkEl.style.display = 'none';  
+
+      navLinkEl.style.display = 'none';
       navItem.style.zIndex = 1000;
 
       navItem.dataset.cachedTransform = navItem.style.transform;
@@ -235,34 +237,36 @@ const CircularNav = ((window) => {
       navItem.dataset.cachedTransitionDuration = navItem.style.transitionDuration;
       navItem.style.transitionDelay = '0s';
       navItem.style.transitionDuration = '0.5s';
-      
-      navItem.addEventListener('transitionend', (event) => {
-        const targetSectionEl = document.body.querySelector(targetSectionSelector);
+
+      navItem.addEventListener('transitionend', () => {
         navItem.style.zIndex = 1;
-        
-        targetSectionEl.classList.add('is-shown');
-        targetSectionEl.classList.remove('is-hidden');
-      }, { once: true });
-      
-      navItem.style.transform = `${event.target.style.transform} scale(20)`; 
+        this.settings.onOpenFinished(targetSectionSelector.slice(1));
+      }, {once: true});
+
+      navItem.style.transform = `${navItem.style.transform} scale(20)`;
     }
-    
+
+    handleItemClosed(navItem) {
+      const navItemLinkEl = navItem.querySelector('a');
+      this.enableScroll();
+
+      navItemLinkEl.style.display = 'block';
+      navItem.style.transitionDelay = navItem.dataset.cachedTransitionDelay;
+      navItem.style.transitionDuration = navItem.dataset.cachedTransitionDuration;
+    }
+
     closeItem(sectionId) {
       const navItemWithSectionId = Array.from(this.navEl.querySelectorAll(Selectors.NAV_ITEM))
         .find(itemEl => itemEl.querySelector('a').getAttribute('href').includes(sectionId));
 
-      const navItemLinkEl = navItemWithSectionId.querySelector('a');
-      
-      navItemWithSectionId.style.transform = navItemWithSectionId.dataset.cachedTransform;
-      navItemWithSectionId.style.transitionDelay = navItemWithSectionId.dataset.cachedTransitionDelay;
-      navItemWithSectionId.style.transitionDuration = navItemWithSectionId.dataset.cachedTransitionDuration;
+      navItemWithSectionId.addEventListener('transitionend',
+        this.handleItemClosed.bind(this, navItemWithSectionId), {once: true});
 
-      navItemWithSectionId.addEventListener('transitionend', (event) => {
-        navItemLinkEl.style.display = 'block';
-        this.enableScroll();
-      }, { once: true });
+      // shrink the nav item circle to original size
+      navItemWithSectionId.style.transitionDuration = '0.25s';
+      navItemWithSectionId.style.transform = navItemWithSectionId.dataset.cachedTransform;
     }
-    
+
     showMenuItems() {
       this.state = {
         ...this.state,
@@ -276,9 +280,9 @@ const CircularNav = ((window) => {
     }
 
     animateNavItem(navItem, index) {
-      const { navItemCount } = this.state;
+      const {navItemCount} = this.state;
       const degree = (2 * Math.PI) / navItemCount;
-      const { distance: radius } = this.settings;
+      const {distance: radius} = this.settings;
 
       const transform = {
         x: Math.cos(degree * (index + 1)) * parseInt(radius, 10),
@@ -349,13 +353,3 @@ const CircularNav = ((window) => {
 
   return CircularNav;
 })(window);
-
-;((window, app) => {
-  document.addEventListener('DOMContentLoaded', (event) => {
-    const navElMatches = Array.from(document.querySelectorAll(CircularNav.DATA_SELECTOR));
-    
-    if (navElMatches.length) {
-      app.nav = navElMatches.map(el => new CircularNav(el))[0];
-    }
-  });
-})(window, app);
