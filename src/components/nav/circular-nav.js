@@ -59,6 +59,19 @@ const CircularNav = ((window) => {
     return getComputedStyle(document.documentElement).getPropertyValue(`--${colorName}`);
   }
 
+  function smartResize(resizeHandler, debounceDelay = 200) {
+    let resizeTimer;
+
+    window.addEventListener('resize', (event) => {
+      if (resizeTimer) {
+        clearTimeout(resizeTimer);
+      }
+
+
+      resizeTimer = setTimeout(() => resizeHandler(event), debounceDelay);
+    }, false);
+  }
+
   class CircularNav {
     constructor(navEl, options = {}) {
       this.navEl = navEl;
@@ -217,6 +230,12 @@ const CircularNav = ((window) => {
           this.handleNavItemClick(event);
         }
       });
+
+      smartResize(() => {
+        if (!this.state.animating && this.state.opened) {
+          this.showMenuItems(true);
+        }
+      }, 100);
     }
 
     disableScroll() {
@@ -274,38 +293,52 @@ const CircularNav = ((window) => {
 
       // shrink the nav item circle to original size
       navItemWithSectionId.style.transitionDuration = '0.25s';
-      navItemWithSectionId.style.transform = navItemWithSectionId.dataset.cachedTransform;
 
+      // Revert bg color in case it has changed
       if (navItemWithSectionId.dataset.cachedBgColor) {
         navItemWithSectionId.style.backgroundColor = navItemWithSectionId.dataset.cachedBgColor;
       }
+
+      // Only re-transform when the nav item has scale(20)
+      if (navItemWithSectionId.style.transform.includes('scale')) {
+        navItemWithSectionId.style.transform = navItemWithSectionId.dataset.cachedTransform;
+      }
     }
 
-    showMenuItems() {
-      this.state = {
-        ...this.state,
-        animating: true
-      };
+    showMenuItems(reposition = false) {
+      if (!reposition) {
+        this.state = {
+          ...this.state,
+          animating: true
+        };
+      }
 
       this.navEl
         .querySelector(Selectors.NAV_ITEM_LIST)
         .addEventListener('transitionend', this.handleMenuItemTransitionEnd);
-      this.navItems.forEach(this.animateNavItem.bind(this));
+      this.navItems.forEach(this.animateNavItem.bind(this, reposition));
     }
 
-    animateNavItem(navItem, index) {
+    animateNavItem(reposition, navItem, index) {
       const {navItemCount} = this.state;
       const degree = (2 * Math.PI) / navItemCount;
-      const {distance: radius} = this.settings;
+      let { distance } = this.settings;
+
+      // Choose radius based on viewport
+      const radius = Math.min(distance, (window.innerWidth / 2) - 60);
 
       const transform = {
         x: Math.cos(degree * (index + 1)) * parseInt(radius, 10),
         y: Math.sin(degree * (index + 1)) * parseInt(radius, 10)
       };
 
-      const delay = Math.max(MAX_ANIMATION_DELAY_SECONDS - 2 / (Math.log(index + 4)), 0);
-      console.log(delay);
-      navItem.style.transitionDelay = `${delay}s`;
+      if (!reposition) {
+        const delay = Math.max(MAX_ANIMATION_DELAY_SECONDS - 2 / (Math.log(index + 4)), 0);
+        navItem.style.transitionDelay = `${delay}s`;
+      } else {
+        navItem.style.transitionDelay = `0.1s`;
+      }
+
       navItem.style.transform = `translateX(${transform.x}px) translateY(${transform.y}px)`;
       navItem.style.opacity = 1;
     }
@@ -330,23 +363,24 @@ const CircularNav = ((window) => {
     }
 
     resetMenuItemStyles() {
-      this.navItems.forEach((navItem) => {
+      this.navItems.forEach((navItem, index) => {
         // Remove transition delay on POP mode, force browser reflow
         if (this.settings.closeTransitionType === CloseTransitionTypes.POP) {
           navItem.style.transitionDelay = '0s';
           navItem.style.offsetHeight;
+        } else {
+          const delay = Math.max(MAX_ANIMATION_DELAY_SECONDS - 2 / (Math.log(index + 4)), 0);
+          navItem.style.transitionDelay = `${delay}s`;
         }
 
         navItem.style.transform = 'translateX(0) translateY(0)';
-        navItem.style.opacity = 0;
+        navItem.style.opacity = '0';
         navItem.style.animationName = 'none';
       });
     }
 
     static get Defaults() {
       return {
-        distance: 200,
-        buttonSize: '56px',
         closeTransitionType: CloseTransitionTypes.MOVE, // or pop
         itemClassName: '',
       };
@@ -355,8 +389,7 @@ const CircularNav = ((window) => {
     get settingToCssVariableMap() {
       return {
         buttonSize: '--button-size',
-        buttonBgColor: '--button-bg-color',
-        itemSize: '--item-size'
+        buttonBgColor: '--button-bg-color'
       };
     }
 

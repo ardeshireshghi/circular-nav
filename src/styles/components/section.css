@@ -65,4 +65,5 @@
 	font-size: 3rem;
 	position: absolute;
 	right: 4rem;
+	z-index: 10;
 }

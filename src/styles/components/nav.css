@@ -1,12 +1,26 @@
 .nav__circular {
   position: relative;
   --green: #4CAF50;
-  --button-size: 56px;
+  --button-size: 40px;
   --button-bg-color: var(--green);
   --button-icon-color: var(--white);
-  --item-size: 80px;
+  --item-size: 90px;
   --item-bg-color: #eee;
   --item-text-color: #666;
+}
+
+@media screen and (min-width: 481px) {
+  .nav__circular {
+    --item-size: 100px;
+    --button-size: 46px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .nav__circular {
+    --item-size: 120px;
+    --button-size: 56px;
+  }
 }
 
 .nav__circular__button {
@@ -93,8 +107,12 @@
   background-color: white;
   color: var(--item-text-color);
   font-weight: 400;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
+}
+
+@media screen and (min-width: 481px) {
+  font-size: 0.9rem;
 }
 
 .nav__item--custom a {
