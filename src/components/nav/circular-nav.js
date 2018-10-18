@@ -55,6 +55,10 @@ const CircularNav = ((window) => {
     window.ontouchmove = null;
   }
 
+  function getColorFromCssVariables(colorName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(`--${colorName}`);
+  }
+
   class CircularNav {
     constructor(navEl, options = {}) {
       this.navEl = navEl;
@@ -229,14 +233,20 @@ const CircularNav = ((window) => {
       const navLinkEl = navItem.querySelector('a');
       const targetSectionSelector = navLinkEl.getAttribute('href');
 
+
       navLinkEl.style.display = 'none';
-      navItem.style.zIndex = 1000;
+      navItem.style.zIndex = '1000';
 
       navItem.dataset.cachedTransform = navItem.style.transform;
       navItem.dataset.cachedTransitionDelay = navItem.style.transitionDelay;
       navItem.dataset.cachedTransitionDuration = navItem.style.transitionDuration;
       navItem.style.transitionDelay = '0s';
       navItem.style.transitionDuration = '0.5s';
+
+      if (navItem.dataset.bgColor) {
+        navItem.dataset.cachedBgColor = getComputedStyle(navItem).getPropertyValue('background-color');
+        navItem.style.backgroundColor = getColorFromCssVariables(navItem.dataset.bgColor);
+      }
 
       navItem.addEventListener('transitionend', () => {
         navItem.style.zIndex = 1;
@@ -265,6 +275,10 @@ const CircularNav = ((window) => {
       // shrink the nav item circle to original size
       navItemWithSectionId.style.transitionDuration = '0.25s';
       navItemWithSectionId.style.transform = navItemWithSectionId.dataset.cachedTransform;
+
+      if (navItemWithSectionId.dataset.cachedBgColor) {
+        navItemWithSectionId.style.backgroundColor = navItemWithSectionId.dataset.cachedBgColor;
+      }
     }
 
     showMenuItems() {
@@ -290,7 +304,7 @@ const CircularNav = ((window) => {
       };
 
       const delay = Math.max(MAX_ANIMATION_DELAY_SECONDS - 2 / (Math.log(index + 4)), 0);
-
+      console.log(delay);
       navItem.style.transitionDelay = `${delay}s`;
       navItem.style.transform = `translateX(${transform.x}px) translateY(${transform.y}px)`;
       navItem.style.opacity = 1;

@@ -5,7 +5,7 @@
 	overflow: auto;
 	position: absolute;
 	will-change: background-color;
-	transition: all 0.25s;
+	transition: background-color 0.25s ease;
 	left: 0;
 	z-index: 1000;
 }
@@ -16,12 +16,6 @@
     justify-content: flex-start;
 	padding: 0 2rem;
 	will-change: opacity, visibility, transform;
-	transition: opacity .55s ease 0.15s, transform .35s ease 0.15s;
-	transform: translateY(30px) translateZ(0);
-}
-
-.page__section.is-hidden .page__section__inner {
-	opacity: 0;
 }
 
 @media screen and (min-width: 769px) {
@@ -32,18 +26,37 @@
 
 .page__section header {
 	flex-basis: 100%;
+	transition: opacity .55s ease 0.15s, transform .35s ease 0.15s;
+	will-change: opacity, transform;
+	transform: translateY(30px) translateZ(0);
 }
+
+.page__section.is-hidden header {
+	opacity: 0;
+}
+.page__section.is-shown header {
+	opacity: 1;
+	transform: translateY(0) translateZ(0);
+}
+.page__section article {
+	flex-grow: 1;
+	will-change: opacity, transform;
+	transition: opacity .55s ease 0.25s, transform .35s ease 0.25s;
+	transform: translateY(30px) translateZ(0);
+}
+
+.page__section.is-hidden article {
+	opacity: 0;
+}
+
+.page__section.is-shown article {
+	opacity: 1;
+	transform: translateY(0) translateZ(0);
+}
+
 .page__section p {
 	font-weight: 300;
 	font-size: 1.2rem;
-}
-
-.page__section article {
-	flex-grow: 1;
-}
-
-.page__section.is-shown .page__section__inner {
-	transform: translateY(0) translateZ(0);	
 }
 
 .page__section__close {

@@ -2,6 +2,11 @@
   --white: #FFF;
   --red: #f44336;
   --cyan: #b3dbf7;
+  --navy-blue: #2196F3;
+  --purple: #673AB7;
+  --light-grey: #b7b7b7;
+  --yellow: #FFC107;
+  --green: #4CAF50;
   --page-background-color: var(--cyan);
   font-size: 1em;
   height: 100%;
@@ -26,6 +31,7 @@ ul, li {
 
 li {
   list-style-type: none;
+  margin-bottom: 0.3rem;
 }
 
 a {

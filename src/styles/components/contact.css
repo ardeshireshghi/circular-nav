@@ -1,5 +1,5 @@
 .section__contact {
-    background: #2196F3;
+    background: var(--navy-blue);
     color: white;
 }
 

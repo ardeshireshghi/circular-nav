@@ -1,0 +1,8 @@
+.section__interests {
+    background-color: var(--purple);
+    color: var(--white);
+}
+
+.section__interests .page__section__close {
+    color: var(--white)
+}

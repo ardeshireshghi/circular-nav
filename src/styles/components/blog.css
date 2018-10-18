@@ -1,5 +1,5 @@
 .section__blog {
-	background-color: #FFC107;
+	background-color: var(--yellow);
 	color: var(--white)
 }
 

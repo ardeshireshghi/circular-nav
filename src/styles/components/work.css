@@ -1,5 +1,5 @@
 .section__work {
-	background-color: #4CAF50;
+	background-color: var(--green);
 	color: var(--white);
 }
 
